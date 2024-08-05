@@ -12,7 +12,6 @@ Switch to the list view (View > as List).
 Enable the size column (View > Show View Options and check the "Size" option).
 Alternatively, you can use the terminal:
 
-sh
 Copy code
 # List all applications with their sizes
 ```
@@ -22,64 +21,45 @@ du -sh /Applications/*
 2. Homebrew Packages
 If you use Homebrew, you can list all installed packages and their sizes:
 
-sh
+
 Copy code
+```
 brew list --formula -1 | xargs -I {} sh -c 'brew info {} | grep -E "^{}:"; du -sh $(brew --cellar)/{} | awk "{print \$1}"'
+```
+
 3. Python Packages
 To list all installed Python packages and their sizes, you can use the pip command:
 
-sh
 Copy code
+```
 pip list --format=columns
-However, this will not show sizes. To get sizes, you can use a Python script:
+```
 
-python
-Copy code
-import pip
-import os
-
-for package in pip.get_installed_distributions():
-    package_location = package.location
-    size = sum(os.path.getsize(os.path.join(dirpath, filename))
-               for dirpath, dirnames, filenames in os.walk(package_location)
-               for filename in filenames)
-    print(f"{package.project_name}: {size / (1024 * 1024):.2f} MB")
-4. Node.js Packages
-To list all globally installed npm packages and their sizes:
 
 sh
 Copy code
 npm list -g --depth=0
 To get sizes, you can navigate to the npm global directory and check sizes manually:
 
-sh
-Copy code
-cd /usr/local/lib/node_modules
-du -sh *
-5. Ruby Gems
-To list all installed Ruby gems and their sizes:
 
-sh
-Copy code
-gem list
 
-# To get sizes, navigate to the gems directory and check sizes
-cd $(gem environment gemdir)/gems
-du -sh *
 6. General Disk Usage
-To get an overview of disk usage, you can use the built-in Disk Utility app or a third-party application like DaisyDisk or GrandPerspective, which provide a visual representation of disk usage.
+To get an overview of disk usage, you can use the built-in Disk Utility app or a third-party application like DaisyDisk or GrandPerspective, which visually represent disk usage.
 
 To use du to get a detailed summary of disk usage:
 
-sh
 Copy code
+```
 sudo du -sh /* | sort -h
+```
 This will show you the size of directories at the root level, which can help you identify large files and directories.
 
 You can then drill down into specific directories for more detail.
 
+```
 sudo du -sh /* | sort -h
-ChatGPT
+```
+
 Running sudo du -sh /* | sort -h will provide a summary of disk usage for each directory at the root level, sorted by size. Here's a step-by-step guide:
 
 Open Terminal:
@@ -88,9 +68,11 @@ You can open Terminal by searching for it in Spotlight or navigating to Applicat
 Run the Command:
 
 Type the following command and press Enter:
-sh
+
 Copy code
+```
 sudo du -sh /* | sort -h
+```
 Enter Your Password:
 
 Since you used sudo, you'll be prompted to enter your administrator password. Type it and press Enter.
@@ -105,19 +87,26 @@ du: /System/Library/Templates/Data/private/var/db/oah: Operation not permitted
 du: /System/Volumes/Preboot/com.apple.security.cryptexd: Operation not permitted
 du: /System/Volumes/Data/.Spotlight-V100: Operation not permitted
 du: /System/Volumes/Data/Library/Application Support/com.apple.TCC: Operation not permitted
-ChatGPT
+
+
 The "Operation not permitted" errors occur because certain system directories are protected and require special permissions to access. You can use the du command with the --exclude option to skip these directories. Here’s how to refine your command:
 
-sh
+
 Copy code
+```
 sudo du -sh /* --exclude="/Library/Application Support/com.apple.TCC" --exclude="/Library/Caches/com.apple.aned" --exclude="/System/Library/Templates/Data/Library/Application Support/com.apple.TCC" --exclude="/System/Library/Templates/Data/private/var/db/oah" --exclude="/System/Volumes/Preboot/com.apple.security.cryptexd" --exclude="/System/Volumes/Data/.Spotlight-V100" --exclude="/System/Volumes/Data/Library/Application Support/com.apple.TCC" | sort -h
+```
+
 This command will exclude the directories that were causing the "Operation not permitted" errors and provide a summary of the remaining directories at the root level.
 
 If you still encounter errors, you can use the 2>/dev/null trick to suppress error messages:
 
-sh
+
 Copy code
+```
 sudo du -sh /* 2>/dev/null | sort -h
+```
+
 This command will redirect error messages to /dev/null, effectively ignoring them, and sort the results by size.
 
   0B	/Volumes
@@ -136,7 +125,7 @@ This command will redirect error messages to /dev/null, effectively ignoring the
  21G	/Library
  85G	/Users
 204G	/System
-ChatGPT
+
 From the output, it appears that the largest directories in your system are /System, /Users, /Library, /Applications, and /private. Here's a breakdown of what you might find in each of these directories and how you can further investigate to free up space:
 
 1. /System (204G)
@@ -158,33 +147,43 @@ Detailed Investigation
 Investigating /System
 Use the following command to get detailed usage inside the /System directory:
 
-sh
+
 Copy code
+```
 sudo du -sh /System/* | sort -h
+```
 Investigating /Users
 To see which users or folders are taking up the most space:
 
-sh
+
 Copy code
+```
 sudo du -sh /Users/* | sort -h
+```
 Investigating /Library
 To get a detailed look at what's using space in /Library:
 
-sh
+
 Copy code
+```
 sudo du -sh /Library/* | sort -h
+```
 Investigating /Applications
 To list all applications and their sizes:
 
-sh
+
 Copy code
+```
 sudo du -sh /Applications/* | sort -h
+```
 Investigating /private
 To see what's taking up space in /private:
 
-sh
+
 Copy code
+```
 sudo du -sh /private/* | sort -h
+```
 Cleaning Up
 Caches: Caches can be cleaned using built-in tools or third-party apps like CleanMyMac.
 Applications: Uninstall any applications you no longer use.
@@ -193,10 +192,12 @@ Logs: System logs can be cleaned up using the Console app or manually from /var/
 Example of Cleaning Up Large Logs
 You can clear old log files in the /var/log directory:
 
-sh
+
 Copy code
+```
 sudo rm -rf /var/log/*.log
 sudo rm -rf /private/var/log/*.log
+```
 Make sure to back up important data before removing files to avoid accidental data loss.
 
   0B	/System/Cryptexes
@@ -206,56 +207,74 @@ Make sure to back up important data before removing files to avoid accidental da
 491M	/System/Applications
  10G	/System/Library
 193G	/System/Volumes
-ChatGPT
+
 The largest part of your /System directory is /System/Volumes at 193G. Here's a breakdown of how to further investigate the /System/Volumes directory and the next steps for cleaning up space.
 
 Investigating /System/Volumes
 Use the following command to get detailed usage inside the /System/Volumes directory:
 
-sh
+
 Copy code
+```
 sudo du -sh /System/Volumes/* | sort -h
+```
+
 Next Steps Based on Likely Contents
 /System/Volumes/Data
 
 This is usually where the majority of the user data resides on macOS Catalina and later.
 Investigate this directory to find large files or folders:
-sh
+
+
 Copy code
+```
 sudo du -sh /System/Volumes/Data/* | sort -h
+```
 Large Subdirectories Inside /System/Volumes/Data
 
 Drill down further into large subdirectories. For example, if /System/Volumes/Data/Users is large:
-sh
+
+
 Copy code
+```
 sudo du -sh /System/Volumes/Data/Users/* | sort -h
+```
 If you find large application support files, logs, or caches, consider cleaning them up.
 Cleaning Up
 Application Support
 Applications often store data in ~/Library/Application Support. Check for large directories there:
 
-sh
+
 Copy code
+```
 du -sh ~/Library/Application\ Support/* | sort -h
+```
 Caches
 Clear caches from the ~/Library/Caches directory:
 
-sh
+
 Copy code
+```
 rm -rf ~/Library/Caches/*
+```
 Logs
 Clear system logs:
 
-sh
+
 Copy code
+```
 sudo rm -rf /private/var/log/*
+```
+
 Downloads
 Check and clear your Downloads folder if it's large:
 
-sh
+
 Copy code
+```
 du -sh ~/Downloads/*
 rm -rf ~/Downloads/*
+```
 Disk Utility
 Use macOS Disk Utility to identify and manage large files or volumes. Open Disk Utility from Applications > Utilities > Disk Utility.
 
@@ -263,23 +282,34 @@ Third-Party Tools
 Consider using third-party disk cleanup tools like CleanMyMac or DaisyDisk for a more user-friendly way to manage disk space.
 
 Example Cleanup Commands
-sh
+
 Copy code
+
 # Clear user cache
+```
 rm -rf ~/Library/Caches/*
+```
 
 # Clear system log files
+```
 sudo rm -rf /var/log/*
 sudo rm -rf /private/var/log/*
+```
 
 # Remove unused Docker images (if applicable)
+```
 docker system prune -a
+```
 
 # Remove old Xcode simulators (if applicable)
+```
 xcrun simctl delete unavailable
+```
 
 # Remove Homebrew cache
+```
 brew cleanup -s
+```
 Backup Important Data
 Always back up important data before performing large-scale deletions to avoid accidental data loss.
 
@@ -296,7 +326,8 @@ Always back up important data before performing large-scale deletions to avoid a
  21G	/System/Volumes/Data/Applications
  21G	/System/Volumes/Data/Library
  85G	/System/Volumes/Data/Users
-ChatGPT
+
+
 From the output, it appears that the largest directories within /System/Volumes/Data are /Users, /Library, /Applications, and /private. Here are the steps you can take to investigate and clean up these directories further:
 
 1. /System/Volumes/Data/Users (85G)
@@ -305,36 +336,48 @@ This directory likely contains personal user data such as documents, downloads, 
 Investigate User Data
 To see which users or specific folders are taking up the most space:
 
-sh
+
 Copy code
+```
 sudo du -sh /System/Volumes/Data/Users/* | sort -h
+```
+
 2. /System/Volumes/Data/Library (21G)
 This directory contains system-wide libraries and application support files.
 
 Investigate Library Data
 To get a detailed look at what's using space in /Library:
 
-sh
+
 Copy code
+```
 sudo du -sh /System/Volumes/Data/Library/* | sort -h
+```
+
 3. /System/Volumes/Data/Applications (21G)
 This directory contains installed applications. If you have many large applications, this can take up significant space.
 
 Investigate Applications
 To list all applications and their sizes:
 
-sh
+
 Copy code
+```
 sudo du -sh /System/Volumes/Data/Applications/* | sort -h
+```
+
 4. /System/Volumes/Data/private (14G)
 The /private directory often contains system logs, temporary files, and caches.
 
 Investigate Private Data
 To see what's taking up space in /private:
 
-sh
+
 Copy code
+```
 sudo du -sh /System/Volumes/Data/private/* | sort -h
+```
+
 Cleaning Up
 Cleaning Up User Data
 Documents, Downloads, Pictures, Music, Videos: Move old files to an external drive or cloud storage.
